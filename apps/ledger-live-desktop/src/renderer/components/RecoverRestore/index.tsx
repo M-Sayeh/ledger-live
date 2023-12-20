@@ -21,7 +21,7 @@ import {
   extractOnboardingState,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
-import { renderError } from "../DeviceAction/rendering";
+import { DeviceActionErrorComponent } from "../DeviceAction/rendering";
 import { useDynamicUrl } from "~/renderer/terms";
 import { isDeviceNotOnboardedError } from "../DeviceAction/utils";
 
@@ -122,12 +122,7 @@ const RecoverRestore = () => {
   }, [currentDevice, getOnboardingState]);
 
   if (error) {
-    return renderError({
-      t,
-      error,
-      device: currentDevice,
-      onRetry,
-    });
+    return <DeviceActionErrorComponent error={error} device={currentDevice} onRetry={onRetry} />;
   }
 
   if (state?.isOnboarded) {
@@ -135,11 +130,10 @@ const RecoverRestore = () => {
       <Flex width="100%" height="100%" position="relative">
         <Flex position="relative" height="100%" width="100%" flexDirection="column">
           <OnboardingNavHeader onClickPrevious={() => history.push(recoverDiscoverPath)} />
-          {renderError({
-            t,
-            error: new DeviceAlreadySetup("", { device: currentDevice?.modelId ?? "device" }),
-            buyLedger: buyNew,
-          })}
+          <DeviceActionErrorComponent
+            error={new DeviceAlreadySetup("", { device: currentDevice?.modelId ?? "device" })}
+            buyLedger={buyNew}
+          />
         </Flex>
       </Flex>
     );
